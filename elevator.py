@@ -1,12 +1,14 @@
 #!/usr/bin/python
 # Filename: elevator.py
 
+import sys
 import os
 import time
 import ichk
 
+MAX_CAPACITY = 10
 BUILDING_HEIGHT = 20
-
+MIN_FLOOR = 1
 
 def showBuilding(floor):
     os.system('clear')
@@ -28,17 +30,43 @@ def isInt(x):
 def getFloorChoice():
     while True:
         input = raw_input('Please enter your floor choice: ')
-        if ichk.isInt(input) and int(input)<=BUILDING_HEIGHT:
+        if ichk.isInt(input) and int(input)<=BUILDING_HEIGHT and int(input) >= MIN_FLOOR:
+            print("Invalid floor")
             break
     floor = int(input)+1
     return floor
 
-def goToFloor(floor):
-    for x in range(1,floor):
-        showBuilding(x)
-        time.sleep(.5)
+def go_down(floor, cur_floor):
+    print("down")
 
-showBuilding(1)
-floor=getFloorChoice()
-goToFloor(floor)
+def goToFloor(floor, cur_floor):
+    if floor < cur_floor:
+        for d in range(cur_floor-1, floor-2, -1):
+            showBuilding(d)
+            time.sleep(.5)
+    elif cur_floor < floor:
+        print("up")
+        for x in range(cur_floor,floor):
+            showBuilding(x)
+            time.sleep(.5)
+    else:
+        time.sleep(.5)
+try:
+    input = raw_input("Please enter number of floors: ")
+    if ichk.isInt(input):
+        BUILDING_HEIGHT = int(input)
+    else:
+        while not ichk.isInt(input):
+               input = raw_input("Please enter a valid number of floors: ")
+        BUILDING_HEIGHT = int(input)
+    showBuilding(1)
+    floor = 0
+    cur_floor = 1
+    while True:
+        floor=getFloorChoice()
+        goToFloor(floor, cur_floor)
+        cur_floor = floor
+except KeyboardInterrupt:
+    print("\nExitting elevator simulator....\n")
+    sys.exit()
 # End of elevator.py
